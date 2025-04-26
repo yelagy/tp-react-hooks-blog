@@ -11,48 +11,77 @@ import { useState, useEffect } from 'react';
  * @returns {Object} État et fonctions pour gérer les posts
  */
 function usePosts({ searchTerm = '', tag = '', limit = 10, infinite = true } = {}) {
-  // État local pour les posts
-  const [posts, setPosts] = useState([]);
+  const [allPosts, setAllPosts] = useState([]); // Tous les posts récupérés
+  const [posts, setPosts] = useState([]); // Posts filtrés
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
-  // TODO: Exercice 1 - Ajouter les états nécessaires pour la pagination
-  
+  const [skip, setSkip] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+
   // TODO: Exercice 4 - Ajouter l'état pour le post sélectionné
-  
   // TODO: Exercice 2 - Utiliser useDebounce pour le terme de recherche
-  
   // TODO: Exercice 3 - Utiliser useCallback pour construire l'URL de l'API
   const buildApiUrl = (skip = 0) => {
-    // Construire l'URL en fonction des filtres
     return 'https://dummyjson.com/posts';
   };
-  
-  // TODO: Exercice 1 - Implémenter la fonction pour charger les posts
+
   const fetchPosts = async (reset = false) => {
     try {
       setLoading(true);
-      // Appeler l'API et mettre à jour les états
+      const url = `${buildApiUrl(skip)}?limit=${limit}&skip=${reset ? 0 : skip}`;
+      console.log('Fetching posts from:', url);
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('Failed to fetch posts');
+      const data = await response.json();
+      console.log('API response:', data);
+
+      if (!data.posts) throw new Error('No posts returned from API');
+      setAllPosts((prevAllPosts) => 
+        reset ? data.posts : [...prevAllPosts, ...data.posts]
+      );
+      setTotal(data.total);
+      setSkip(reset ? limit : skip + limit);
+      setHasMore(data.posts.length === limit);
     } catch (err) {
+      console.error('Error fetching posts:', err);
       setError(err.message);
     } finally {
       setLoading(false);
     }
   };
-  
-  // TODO: Exercice 1 - Utiliser useEffect pour charger les posts quand les filtres changent
-  
+
+  // Filtrer les posts en fonction de searchTerm
+  useEffect(() => {
+    if (!searchTerm) {
+      setPosts(allPosts); // Afficher tous les posts si pas de recherche
+    } else {
+      const filteredPosts = allPosts.filter((post) =>
+        post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        post.body.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      console.log('Filtered posts:', filteredPosts);
+      setPosts(filteredPosts);
+    }
+  }, [searchTerm, allPosts]);
+
+  // Charger les posts initiaux ou à la pagination
+  useEffect(() => {
+    fetchPosts(true);
+  }, [tag, limit]); // Ne pas inclure searchTerm ici pour éviter des rechargements inutiles
+
   // TODO: Exercice 4 - Implémenter la fonction pour charger plus de posts
-  
   // TODO: Exercice 3 - Utiliser useMemo pour calculer les tags uniques
-  
   // TODO: Exercice 4 - Implémenter la fonction pour charger un post par son ID
-  
+
   return {
     posts,
     loading,
     error,
-    // Retourner les autres états et fonctions
+    skip,
+    total,
+    hasMore,
+    fetchPosts
   };
 }
 

@@ -23,10 +23,10 @@ function PostList({
   onTagClick,
   infiniteScroll = true
 }) {
+  console.log('PostList props:', { posts, loading, hasMore });
+
   // TODO: Exercice 3 - Utiliser le hook useTheme
-  
   // TODO: Exercice 4 - Utiliser useIntersectionObserver pour le défilement infini
-  
   // TODO: Exercice 3 - Utiliser useCallback pour les gestionnaires d'événements
   const handlePostClick = (post) => {
     if (onPostClick) {
@@ -35,24 +35,60 @@ function PostList({
   };
   
   const handleTagClick = (e, tag) => {
-    e.stopPropagation(); // Éviter de déclencher le clic sur le post
+    e.stopPropagation();
     if (onTagClick) {
       onTagClick(tag);
     }
   };
   
-  // TODO: Exercice 1 - Gérer le cas où il n'y a pas de posts
-  
+  // Exercice 1 - Gérer le cas où il n'y a pas de posts
+  if (!loading && posts.length === 0) {
+    return <div className="no-posts">No posts available</div>;
+  }
+
   return (
     <div className="post-list">
-      {/* TODO: Exercice 1 - Afficher la liste des posts */}
+      {/* Exercice 1 - Afficher la liste des posts */}
+      {posts.map((post) => (
+        <div
+          key={post.id}
+          className="card mb-3"
+          onClick={() => handlePostClick(post)}
+        >
+          <div className="card-body">
+            <h3 className="card-title">{post.title}</h3>
+            <p className="card-text">{post.body}</p>
+            {post.tags && post.tags.length > 0 && (
+              <div className="tags">
+                {post.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="badge bg-secondary me-1"
+                    onClick={(e) => handleTagClick(e, tag)}
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      ))}
       
       {/* Afficher le spinner de chargement */}
       {loading && <LoadingSpinner />}
       
       {/* TODO: Exercice 4 - Ajouter la référence pour le défilement infini */}
       
-      {/* TODO: Exercice 1 - Ajouter le bouton "Charger plus" pour le mode non-infini */}
+      {/* Exercice 1 - Ajouter le bouton "Charger plus" pour le mode non-infini */}
+      {!infiniteScroll && hasMore && !loading && (
+        <button
+          className="btn btn-primary"
+          onClick={onLoadMore}
+        >
+          Load More
+        </button>
+      )}
     </div>
   );
 }

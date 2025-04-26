@@ -18,12 +18,19 @@ function PostSearch({
   const [searchInput, setSearchInput] = useState('');
   
   // TODO: Exercice 3 - Utiliser le hook useTheme
-  
   // TODO: Exercice 3 - Utiliser useCallback pour optimiser le gestionnaire
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchInput(value);
     onSearch(value);
+    console.log('Search term:', value);
+  };
+  
+  // Exercice 1 - Gestionnaire pour effacer la recherche
+  const handleClearSearch = () => {
+    setSearchInput('');
+    onSearch('');
+    console.log('Search cleared');
   };
   
   // TODO: Exercice 3 - Appliquer les classes CSS en fonction du thème
@@ -40,15 +47,24 @@ function PostSearch({
             <input
               type="text"
               className="form-control"
-              placeholder="Rechercher des articles..."
+              placeholder="Rechercher par titre ou contenu..."
               value={searchInput}
               onChange={handleSearchChange}
               aria-label="Rechercher"
             />
-            {/* TODO: Exercice 1 - Ajouter le bouton pour effacer la recherche */}
+            {/* Exercice 1 - Ajouter le bouton pour effacer la recherche */}
+            {searchInput && (
+              <button
+                className="btn btn-outline-secondary"
+                type="button"
+                onClick={handleClearSearch}
+                aria-label="Effacer la recherche"
+              >
+                <i className="bi bi-x"></i>
+              </button>
+            )}
           </div>
         </div>
-        
         {/* TODO: Exercice 4 - Ajouter le sélecteur de tags */}
       </div>
     </div>

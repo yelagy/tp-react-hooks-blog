@@ -47,16 +47,29 @@ Pour chaque exercice :
 ### Exercice 1 : État et Effets 
 #### Objectif : Implémenter l'affichage et la recherche de posts
 
-- [ ] 1.1 Compléter le hook `usePosts` pour récupérer les posts depuis l'API dummyjson.com
-- [ ] 1.2 Implémenter le composant `PostList` pour afficher les posts
-- [ ] 1.3 Ajouter la fonctionnalité de recherche par titre ou contenu dans `PostSearch`
-- [ ] 1.4 Documenter votre solution ici
+- [x] 1.1 Compléter le hook `usePosts` pour récupérer les posts depuis l'API dummyjson.com
+- [x] 1.2 Implémenter le composant `PostList` pour afficher les posts
+- [x] 1.3 Ajouter la fonctionnalité de recherche par titre ou contenu dans `PostSearch`
+- [x] 1.4 Documenter votre solution ici
 
-_Votre réponse pour l'exercice 1 :_
-```
-Expliquez votre solution ici
-[Ajoutez vos captures d'écran]
-```
+**Explication de la solution :**
+
+La solution implémente une application React pour récupérer, afficher et rechercher des posts depuis l'API `https://dummyjson.com/posts`.
+
+1. **Hook `usePosts` (1.1)** : Le hook `usePosts` récupère les posts via `fetch` avec pagination (10 posts par page). Il stocke tous les posts dans `allPosts` et filtre les résultats dans `posts` en fonction du terme de recherche (`searchTerm`) en comparant le titre et le contenu (insensible à la casse). Des journaux de débogage vérifient la récupération et le filtrage.
+
+2. **Composant `PostList` (1.2)** : Affiche les posts sous forme de cartes stylisées avec `.card` et `.badge` (de `App.css`). Si aucun post n'est disponible, un message "No posts available" s'affiche. Un bouton "Load More" permet de charger plus de posts en mode non-infini.
+
+3. **Recherche dans `PostSearch` (1.3)** : `PostSearch` permet de saisir un terme de recherche, qui est envoyé à `usePosts` pour filtrer les posts. Un bouton de suppression efface la recherche. Les styles utilisent Bootstrap pour une interface fluide.
+
+4. **Intégration dans `App.jsx`** : Relie `usePosts`, `PostSearch`, et `PostList`. Gère `searchTerm` pour la recherche et affiche les erreurs API avec `.alert`.
+
+**Captures d'écran :**
+
+- Liste des posts affichés :
+  ![Liste des posts](screenshots/ex_1/postList.png)
+- Barre de recherche avec terme saisi :
+  ![Recherche](screenshots/ex_1/postSearch.png)
 
 ### Exercice 2 : Hooks Personnalisés
 #### Objectif : Créer des hooks réutilisables
